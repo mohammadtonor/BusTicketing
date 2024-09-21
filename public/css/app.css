@@ -1,0 +1,100 @@
+/* Custom Styles for Admin Dashboard */
+
+/* Sidebar styles */
+.sidebar {
+    height: 100%;
+    flex: 1;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    background-color: #343a40;
+    padding: 20px;
+}
+
+.sidebar .nav-link {
+    font-size: 1.1rem;
+    margin: 10px 0;
+}
+
+
+.sidebar .nav-link:hover {
+    background-color: #495057;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.sidebar h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Main content */
+.container-fluid {
+    margin-left: 250px;
+    height: 100vh;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #007bff;
+}
+
+/* Navbar */
+.navbar {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+table th {
+    background-color: #f8f9fa;
+    font-size: 1rem;
+}
+
+table td {
+    font-size: 0.9rem;
+}
+
+table .btn {
+    font-size: 0.8rem;
+}
+
+.container {
+    height: 100vh;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .container-fluid {
+        margin-left: 0;
+        height: 100vh !important;
+    }
+}
