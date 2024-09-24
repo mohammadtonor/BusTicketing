@@ -70,7 +70,7 @@
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
       }
-
+ 
       .btn-bd-primary {
         --bd-violet-bg: #712cf9;
         --bd-violet-rgb: 112.520718, 44.062154, 249.437846;

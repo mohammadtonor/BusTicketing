@@ -26,7 +26,7 @@ class RouteController extends Controller
             'origin_terminal_id' => 'required|exists:terminals,id',
             'destination_terminal_id' => 'required|exists:terminals,id|different:origin_terminal_id',
             'price' => 'required|numeric',
-            'duration' => 'required',
+            'duration' => 'required|numeric',
         ]);
 
         Route::create($request->all());

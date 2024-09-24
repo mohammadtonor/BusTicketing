@@ -5,7 +5,9 @@ use App\Http\Controllers\Auth\UserAuthController;
 use App\Http\Controllers\Admin\BusController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\RouteController;
+use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\TerminalController;
+use App\Http\Controllers\Frontend\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +28,15 @@ Route::get('login/register', [UserAuthController::class, 'showLoginForm'])->name
 Route::post('login/register', [UserAuthController::class, 'register'])->name('user.register.submit');
 
 
+Route::get('/', [HomeController::class, 'index']);
+Route::get('/search', [HomeController::class, 'search'])->name('schedules');
+Route::post('/search', [HomeController::class, 'searchSchedules'])->name('schedules.search');
+
+Route::group(['middleware' => 'auth'], function() {
+
+});
+
+
 Route::prefix('admin')->group(function () {
     Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
@@ -44,12 +55,9 @@ Route::prefix('admin')->group(function () {
     Route::resource('cities', CityController::class);
     Route::resource('terminals', TerminalController::class);
     Route::resource('routes', RouteController::class);
-    Route::resource('schedules', RouteController::class);
+    Route::resource('schedules', ScheduleController::class);
 
     });
 });
 
 
-Route::get('/', function () {
-    return view('welcome');
-});

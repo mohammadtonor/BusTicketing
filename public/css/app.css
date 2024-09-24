@@ -81,9 +81,9 @@ table .btn {
     font-size: 0.8rem;
 }
 
-.container {
+/* .container {
     height: 100vh;
-}
+} */
 
 /* Responsive Styles */
 @media (max-width: 768px) {
@@ -97,4 +97,50 @@ table .btn {
         margin-left: 0;
         height: 100vh !important;
     }
+}
+
+.schedule-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bus-info{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.left-info, .middle-info  {
+    display: flex;
+    flex-direction: column;
+}
+
+.schedule-item h5 {
+    margin-bottom: 5px;
+}
+
+.schedule-item p {
+    margin-bottom: 0;
+}
+
+.action-button button {
+    padding: 8px 16px;
+}
+
+.route-info, .total-seats {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.departure-time{
+    display: flex;
+    flex-direction: column;
+}
+.departure-time h5, p{
+    display: flex;
 }

@@ -84,7 +84,7 @@
     <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
       
       <li>
-        <a href="{{route('admin.dashboard')}}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Dashboard" data-bs-original-title="Dashboard">
+        <a href="{{route('admin.dashboard')}}" class="nav-link py-3 active border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Dashboard" data-bs-original-title="Dashboard">
           <svg class="bi pe-none" width="24" height="24" role="img" aria-label="Dashboard"><use xlink:href="#speedometer2"></use></svg>
         </a>
       </li>
