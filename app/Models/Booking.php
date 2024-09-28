@@ -10,7 +10,10 @@ class Booking extends Model
     use HasFactory;
 
     protected $fillable = [
-         'schedule_id', 'passenger_id', 'total_price', 'status',
+        'schedule_id',
+        'passenger_id',
+        'total_price',
+        'status',
     ];
 
     public function user()
@@ -28,8 +31,8 @@ class Booking extends Model
         return $this->hasOne(Payment::class);
     }
 
-    public function seat()
+    public function seats()
     {
-        return $this->hasOne(Seat::class);
+        return $this->hasMany(Seat::class);
     }
 }

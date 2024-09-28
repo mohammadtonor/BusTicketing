@@ -29,9 +29,14 @@
     font-weight: 600;
 }
 
+.container {
+        max-width: 1100px !important;
+}
+
 /* Main content */
 .container-fluid {
     margin-left: 250px;
+    
     height: 100vh;
 }
 

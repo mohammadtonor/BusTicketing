@@ -22,18 +22,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('login', [UserAuthController::class, 'showLoginForm'])->name('user.login');
-Route::post('login', [UserAuthController::class, 'user.login.submit']);
+Route::post('login', [UserAuthController::class, 'login'])->name('user.login.submit');
 Route::post('logout', [UserAuthController::class, 'logout'])->name('user.logout');
-Route::get('login/register', [UserAuthController::class, 'showLoginForm'])->name('user.register');
+Route::get('login/register', [UserAuthController::class, 'showRegistrationForm'])->name('user.register');
 Route::post('login/register', [UserAuthController::class, 'register'])->name('user.register.submit');
 
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/search', [HomeController::class, 'search'])->name('schedules');
 Route::post('/search', [HomeController::class, 'searchSchedules'])->name('schedules.search');
 
-Route::group(['middleware' => 'auth'], function() {
-
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/schedule/{schedule}', [HomeController::class, 'showSchedule'])->name('schedules.show');
+    Route::post('/booking/store-seaats', [HomeController::class, 'storeSeats'])->name('schedules.store-seats');
+    Route::get('/booking/information/{schedule}', [HomeController::class, 'infoBooking'])->name('booking.information');
+    Route::post('/booking/confirmation', [HomeController::class, 'confirmBooking'])->name('booking.confirmation');
 });
 
 
@@ -46,18 +49,15 @@ Route::prefix('admin')->group(function () {
     Route::get('register', [AdminAuthController::class, 'showRegistrationForm'])->name('admin.register');
     Route::post('register', [AdminAuthController::class, 'register'])->name('admin.register.submit');
 
-    Route::group(['middleware' => 'admin'], function() {
+    Route::group(['middleware' => 'admin'], function () {
         Route::get('dashboard', function () {
             return view('admin.dashboard');
         })->name('admin.dashboard');
 
-    Route::resource('buses', BusController::class);
-    Route::resource('cities', CityController::class);
-    Route::resource('terminals', TerminalController::class);
-    Route::resource('routes', RouteController::class);
-    Route::resource('schedules', ScheduleController::class);
-
+        Route::resource('buses', BusController::class);
+        Route::resource('cities', CityController::class);
+        Route::resource('terminals', TerminalController::class);
+        Route::resource('routes', RouteController::class);
+        Route::resource('schedules', ScheduleController::class);
     });
 });
-
-

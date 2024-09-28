@@ -4,13 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Schedule extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'bus_id', 'route_id', 'departure_time', 'total_seats'
+        'bus_id',
+        'route_id',
+        'departure_time',
+        'total_seats'
     ];
 
     public function bus()
@@ -27,6 +31,4 @@ class Schedule extends Model
     {
         return $this->hasMany(Booking::class);
     }
-
-    
 }
