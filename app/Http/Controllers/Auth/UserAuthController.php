@@ -77,4 +77,35 @@ class UserAuthController extends Controller
         Auth::logout();
         return redirect()->route('home');
     }
+
+    public function showProfile()
+    {
+        return view('frontend.user-profile');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        // Validate the request inputs
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
+            'phone' => 'nullable|string|max:20',
+            'national_num' => 'required|string|max:50',
+            'gender' => 'required|in:male,female',
+        ]);
+
+        // Update the user information
+        $user = Auth::user();
+        $nameParts = explode(' ', $request->input('name'), 2);
+        $user->first_name = $nameParts[0];
+        $user->last_name = $nameParts[1] ?? '';
+        $user->email = $request->input('email');
+        $user->phone = $request->input('phone');
+        $user->national_num = $request->input('national_num');
+        $user->gender = $request->input('gender');
+        $user->save();
+
+        // Redirect with success message
+        return redirect()->back()->with('success', 'Your information has been updated successfully!');
+    }
 }

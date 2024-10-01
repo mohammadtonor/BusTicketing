@@ -4,11 +4,6 @@
 @endsection
 @section('content')
     <div class="container">
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
 
         @if (session()->get('errors'))
             @foreach (session()->get('errors')->getMessages() as $key => $messages)
@@ -31,7 +26,7 @@
                             <li class="list-group-item"><strong>Origin:
                                 </strong>{{ session('schedule_information')['route']['origin_terminal']['name'] }}</li>
                             <li class="list-group-item"><strong>Destination:
-                                </strong>{{ session('schedule_information')['route']['origin_terminal']['name'] }}</li>
+                                </strong>{{ session('schedule_information')['route']['destination_terminal']['name'] }}</li>
                             <li class="list-group-item"><strong>Departure Time:
                                 </strong>{{ session('schedule_information')['departure_time'] }}</li>
                             <li class="list-group-item"><strong>Total Seats:
@@ -57,38 +52,98 @@
                 </div>
             </div>
 
-            <!-- User Contact Information Form -->
+            <!-- User Contact Information Form for Each Seat -->
             <div class="col-lg-7  h-100">
                 <div class="card p-3">
                     <form action="{{ route('booking.confirmation') }}" method="POST">
                         @csrf
-                        <h4>User Contact Information</h4>
+                        <h4>Passenger Information for Selected Seats</h4>
+
+                        <!-- First User Full Information -->
+                        <h5 class="mt-4">Seat Number: {{ session('selected_seats')[0] }}</h5>
 
                         <div class="row mb-3">
-                            <!-- Name -->
+                            <!-- Full Name -->
                             <div class="col-12 mb-2">
                                 <label for="name" class="form-label d-flex">Full Name</label>
-                                <input type="text" class="form-control" id="name" name="name"
-                                    placeholder="John Doe" required value="{{ Auth::user()->first_name ?? '' }}">
+                                <input type="text" class="form-control" id="name" name="passengers[0][name]"
+                                    placeholder="John Doe" required
+                                    value="{{ Auth::user()->first_name ?? '' }} {{ Auth::user()->last_name ?? '' }}">
                             </div>
 
-                            <div class="col-12">
+                            <!-- Phone Number -->
+                            <div class="col-12 mb-2">
                                 <label for="phone" class="form-label d-flex">Phone Number</label>
-                                <input type="text" class="form-control" id="phone" name="phone"
-                                    placeholder="123-456-7890" required value="{{ Auth::user()->phone ?? '' }}">
+                                <input type="text" class="form-control" id="phone" name="passengers[0][phone]"
+                                    placeholder="123-456-7890" value="{{ Auth::user()->phone ?? '' }}">
                             </div>
+
+                            <!-- National Number -->
+                            <div class="col-12 mb-2">
+                                <label for="national_num" class="form-label d-flex">National
+                                    Number</label>
+                                <input type="text" class="form-control" id="national_num"
+                                    name="passengers[0][national_num]" placeholder="National ID"
+                                    value="{{ Auth::user()->national_num ?? '' }}" required>
+                            </div>
+
                             <!-- Gender -->
-                            <div class="col-12">
-                                <label for="gender" class="form-label d-felx">Gender</label>
-                                <select name="gender" id="gender" class="form-control" required>
+                            <div class="col-12 mb-2">
+                                <label for="gender" class="form-label d-flex">Gender</label>
+                                <select name="passengers[0][gender]" id="gender" class="form-control" required>
                                     <option value="" disabled>Select Gender</option>
-                                    <option {{ Auth::user()->gender === 'male' && 'selected' }} value="male">Male
+                                    <option value="male" {{ Auth::user()->gender === 'male' ? 'selected' : '' }}>Male
                                     </option>
-                                    <option {{ Auth::user()->gender === 'female' && 'selected' }} value="female">Female
+                                    <option value="female" {{ Auth::user()->gender === 'female' ? 'selected' : '' }}>Female
                                     </option>
                                 </select>
                             </div>
+
+                            <!-- Hidden Seat Number -->
+                            <input type="hidden" name="passengers[0][seat_number]"
+                                value="{{ session('selected_seats')[0] }}">
                         </div>
+
+                        <!-- Loop through remaining passengers and get national_num, full_name, and gender -->
+                        @foreach (session('selected_seats') as $index => $seat)
+                            @if ($index > 0)
+                                <!-- Skip the first passenger -->
+                                <h5 class="mt-4">Seat Number: {{ $seat }}</h5>
+
+                                <div class="row mb-3">
+                                    <!-- Full Name -->
+                                    <div class="col-12 mb-2">
+                                        <label for="name_{{ $index }}" class="form-label d-flex">Full Name</label>
+                                        <input type="text" class="form-control" id="name_{{ $index }}"
+                                            name="passengers[{{ $index }}][name]" placeholder="John Doe" required>
+                                    </div>
+
+                                    <!-- National Number -->
+                                    <div class="col-12 mb-2">
+                                        <label for="national_num_{{ $index }}" class="form-label d-flex">National
+                                            Number</label>
+                                        <input type="text" class="form-control" id="national_num_{{ $index }}"
+                                            name="passengers[{{ $index }}][national_num]" placeholder="National ID"
+                                            required>
+                                    </div>
+
+                                    <!-- Gender -->
+                                    <div class="col-12 mb-2">
+                                        <label for="gender_{{ $index }}" class="form-label d-flex">Gender</label>
+                                        <select name="passengers[{{ $index }}][gender]"
+                                            id="gender_{{ $index }}" class="form-control" required>
+                                            <option value="" disabled>Select Gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Hidden Seat Number -->
+                                    <input type="hidden" name="passengers[{{ $index }}][seat_number]"
+                                        value="{{ $seat }}">
+                                </div>
+                            @endif
+                        @endforeach
 
                         <!-- Submit Button -->
                         <div class="mt-4 d-flex">

@@ -10,7 +10,11 @@ class Seat extends Model
     use HasFactory;
 
     protected $fillable = [
-        'seat_number', 'booking_id', 'gender',
+        'seat_number',
+        'booking_id',
+        'gender',
+        "national_num",
+        'full_name'
     ];
 
     public function booking()

@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\RouteController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\TerminalController;
+use App\Http\Controllers\Frontend\BookingController;
+use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Frontend\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +39,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/booking/store-seaats', [HomeController::class, 'storeSeats'])->name('schedules.store-seats');
     Route::get('/booking/information/{schedule}', [HomeController::class, 'infoBooking'])->name('booking.information');
     Route::post('/booking/confirmation', [HomeController::class, 'confirmBooking'])->name('booking.confirmation');
+
+
+    Route::prefix('user')->group(function () {
+        Route::get('/profile', [UserAuthController::class, 'showProfile'])->name('user.profile.show');
+        Route::put('/profile/{userId}', [UserAuthController::class, 'updateProfile'])->name('user.profile.update');
+        Route::get('/booked-schedules', [BookingController::class, 'bookedSchedules'])->name('booked-schedules');
+        Route::delete('/cancel-seat/{seatId}', [BookingController::class, 'cancelSeat'])->name('cancel-seat');
+        Route::delete('/cancel-all-seats/{bookingId}', [BookingController::class, 'cancelAllSeats'])->name('cancel-all-seats');
+    });
 });
 
 
@@ -59,5 +70,12 @@ Route::prefix('admin')->group(function () {
         Route::resource('terminals', TerminalController::class);
         Route::resource('routes', RouteController::class);
         Route::resource('schedules', ScheduleController::class);
+
+        Route::get('/booking/{id}/reserved-passengers', [AdminBookingController::class, 'showScheduleReservedPassengers'])
+            ->name('admin.bookings.reserved-passengers');
+
+        Route::delete('/cancel-seat/{id}', [AdminBookingController::class, 'cancelSeat'])->name('admin.cancel-seat');
+
+        Route::post('/book-seat', [AdminBookingController::class, 'bookSeat'])->name('admin.book-seat');
     });
 });

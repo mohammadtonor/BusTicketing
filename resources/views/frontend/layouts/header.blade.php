@@ -25,8 +25,9 @@
                     @auth
                         <!-- For authenticated users -->
                         <li class="nav-item"><a class="nav-link" href="{{ route('schedules') }}">Schedules-List</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Booked-Schedule</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('booked-schedules') }}">Booked-Schedule</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('user.profile.show') }}">Profile</a></li>
 
                         <!-- Logout -->
                         <li class="nav-item">

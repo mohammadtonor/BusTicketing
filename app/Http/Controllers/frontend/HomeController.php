@@ -9,6 +9,7 @@ use App\Models\Schedule;
 use App\Models\Seat;
 use App\Models\Terminal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -106,54 +107,61 @@ class HomeController extends Controller
 
     public function confirmBooking(Request $request)
     {
-        // Validate the input
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
-            'gender' => 'required',
-        ]);
+        // Retrieve schedule information from the session
+        $scheduleInformation = session('schedule_information');
+        $selectedSeats = session('selected_seats');
 
-        // Check if schedule information or selected seats are missing from the session
-        if (!session('schedule_information') || !session('selected_seats')) {
-            return redirect()->back()->with('error', 'No schedule or seats selected. Please try again.');
+        // Ensure that schedule information and selected seats exist
+        if (!$scheduleInformation || !$selectedSeats) {
+            return redirect()->back()->withErrors('No schedule or seat information found.');
         }
 
-        // Get the selected seats and schedule information from the session
-        $selected_seats = session('selected_seats');
-        $schedule_information = session('schedule_information');
+        // For the first passenger (authenticated user), create the booking with their info
+        $firstPassenger = $request->passengers[0];
 
-        // Calculate total price based on the number of selected seats
-        $seat_price = $schedule_information['route']['price']; // Assuming seat price is stored in the session
-        $total_price = count($selected_seats) * $seat_price;
-
-        // Create a new booking
         $booking = Booking::create([
-            'schedule_id' => $schedule_information['id'], // Use schedule ID from session
-            'passenger_id' => auth()->id(), // Assuming passenger is the logged-in user
-            'total_price' => $total_price, // Calculated total price
-            'status' => 'reserved', // Example status
+            'passenger_id' => Auth::id(),
+            'phone_number' => $firstPassenger['phone'],
+            'schedule_id' => $scheduleInformation['id'],
+            'total_price' => $scheduleInformation['route']['price'] * count($selectedSeats),
+            'status' => 'booked',
         ]);
 
-        // Loop through each selected seat and create a seat record with the booking ID and gender
-        foreach ($selected_seats as $seat_number) {
-            Seat::create([
-                'seat_number' => $seat_number,
-                'booking_id' => $booking->id,
-                'gender' => $request->gender,
-            ]);
+        // Attach the first seat to the booking
+        Seat::create([
+            'seat_number' => $firstPassenger['seat_number'],
+            'booking_id' => $booking->id,
+            "full_name" =>  $firstPassenger['name'],
+            'national_num' => $firstPassenger['national_num'],
+            'gender' => $firstPassenger['gender'],
+        ]);
+
+        // Handle subsequent passengers
+        foreach ($request->passengers as $index => $passenger) {
+            if ($index > 0) {
+                // Create a new booking for each subsequent passenger
+                Seat::create([
+                    'seat_number' => $passenger['seat_number'],
+                    'booking_id' => $booking->id, // Use the same booking ID
+                    'gender' => $passenger['gender'],
+                    'national_num' => $passenger['national_num'],
+                    "full_name" =>  $firstPassenger['name'],
+                ]);
+            }
         }
+
 
         // Assuming schedule_information is stored in the session
-        $schedule = Schedule::find($schedule_information['id']);
+        $schedule = Schedule::find($scheduleInformation['id']);
 
         // Decrease total_seats in the schedule by the number of selected seats
-        $schedule->total_seats -= count($selected_seats);
+        $schedule->total_seats -= count($selectedSeats);
         $schedule->save(); // Save the updated schedule
 
         // Clear the session after booking
         session()->forget(['schedule_information', 'selected_seats']);
 
         // Redirect back with a success message
-        return redirect()->back()->with('success', 'Seats reserved successfully!');
+        return redirect()->route('booked-schedules')->with('success', 'Seats reserved successfully!');
     }
 }
